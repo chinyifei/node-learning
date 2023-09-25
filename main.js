@@ -17,3 +17,4 @@ console.log('node 入口文件')
 
 综上所述，尽管exports和module.exports在语法上有一些差别，但它们本质上指向同一个对象，都用于导出模块的内容。推荐使用module.exports来导出模块的内容，以确保一致性和避免潜在的问题。
  */
+
