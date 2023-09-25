@@ -1,0 +1,8 @@
+一飞
+0123456789
+abcdefghigklmnopqrstuvwxyz
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+ds  as测试文本内容!
+换行
+回车
+end!
