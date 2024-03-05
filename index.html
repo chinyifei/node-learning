@@ -1,58 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>align-content属性</title>
     <style>
-        .box {
-            width: 200px;
-            display: flex;
-            flex-direction: column;
-            flex-wrap: wrap; 
-           
-            flex-flow: row wrap;
+      .box {
+        width: 200px;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
 
-            /* 
+        flex-flow: row wrap;
+
+        /* 
           默认值为:stretch 
           align-content:可以取的值有 flex-start,
           flex-end,center,space-around,space-between,stretch
           */
-            /* align-content: stretch; */
+        /* align-content: stretch; */
 
-          
-            height: 300px;
-            background-color: grey;
-        }
+        height: 300px;
+        background-color: grey;
+      }
 
-        .box1 {
-            height: 30px;
-            width: 100px;
-            background-color: orange;
-        }
+      .box1 {
+        height: 30px;
+        width: 100px;
+        background-color: orange;
+      }
 
-        .box2 {
-            height: 50px;
-            width: 200px;
-            background-color: red;
-        }
+      .box2 {
+        height: 50px;
+        width: 200px;
+        background-color: red;
+      }
 
-        .box3 {
-            height: 30px;
-            width: 100px;
-            background-color: #08a9b5;
-        }
+      .box3 {
+        height: 30px;
+        width: 100px;
+        background-color: #08a9b5;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="box">
-        <div class="box1">box1</div>
-        <div class="box2">box2</div>
-        <div class="box3">box3</div>
+      <div class="box1" onclick="handleClick(event)">box1</div>
+      <div class="box2">box2</div>
+      <div class="box3">box3</div>
     </div>
-</body>
-
+  </body>
+  <script>
+    // 点击事件处理程序
+    function handleClick(e) {
+      console.log(e.target);
+    }
+  </script>
 </html>
