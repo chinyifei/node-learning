@@ -1,5 +1,5 @@
 /**
- * 并发请求
+ * 并发请求 （错误重试）
  * @param {string[]} urls 请求的url数组
  * @param {number} maxNum
  */
@@ -16,10 +16,24 @@ function concurRequest(urls, maxNum) {
       const url = urls[index];
       index++;
       try {
-        const res = await fetch(url);
+        /** 这里fetch在404URL时并不会抛出错误，而是response.ok = false */
+        const res = await fetchSomething(url);
         result[i] = res;
       } catch (error) {
-        result[i] = error;
+        console.log("-------------");
+        const finallyRes = await retryRequest(url, 3)
+          .then((res) => {
+            result[i] = res;
+          })
+          .catch((err) => {
+            result[i] = err;
+          });
+        /**
+         * 这里finallyRes是拿不到值的，因为await拿不到reject的值,
+         * 只能在try catch中的err回调中拿
+         */
+        console.log("finallyRes:", finallyRes);
+        //result[i] = finallyRes
       } finally {
         count++;
         if (count === urls.length) {
@@ -36,15 +50,58 @@ function concurRequest(urls, maxNum) {
   });
 }
 
+//错误重试
+function retryRequest(url, maxRetries) {
+  return new Promise((resolve, reject) => {
+    let retries = 0;
+
+    function attempt() {
+      fetchSomething(url)
+        .then((data) => resolve(data))
+        .catch((error) => {
+          retries++;
+          if (retries <= maxRetries) {
+            console.log("fail:", error);
+            console.log(`请求失败，第${retries}次重试...`);
+            attempt();
+          } else {
+            reject(error);
+          }
+        });
+    }
+
+    attempt();
+  });
+}
+
+/***
+这里fetch在404URL时并不会抛出错误，而是response.ok = false ,所以为了测试方便，
+我们来改造一下
+*/
+// class FetchError extends Error {
+//   constructor(response) {
+//     super(`HTTP error ${response}`);
+//     this.response = response;
+//   }
+// }
+
+function fetchSomething(...args) {
+  return fetch(...args).then((response) => {
+    if (!response.ok) {
+      return Promise.reject(response);
+    }
+    return Promise.resolve(response);
+  });
+}
+
 /**
  * 测试用例
  */
 const concurRequestTest = () => {
   const urls = [];
   for (let i = 0; i <= 20; i++) {
-    urls.push(`https://jsonplaceholder.typicode.com/todos/${i + 1}`);
+    urls.push(`https://jsonplaceholder.typicode.com/todos/${i}`);
   }
-  console.log("urls", urls);
   concurRequest(urls, 5).then((res) => {
     console.log(res);
   });
