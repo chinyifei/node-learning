@@ -20,7 +20,7 @@ function concurRequest(urls, maxNum) {
         const res = await fetchSomething(url);
         result[i] = res;
       } catch (error) {
-        console.log("-------------");
+        console.log("-------------", error);
         const finallyRes = await retryRequest(url, 3)
           .then((res) => {
             result[i] = res;

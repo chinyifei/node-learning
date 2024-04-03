@@ -421,4 +421,19 @@
 <#--租金计划表信息-->
 <#include "common/rent_pdf.ftl"/>
 </body>
+<script async>
+
+  let ll = new Map()
+  for(let i= 0; i<1000000;i++){
+    ll.set({i:i,age:i+10}, {
+      age:i,
+      name:`mike${i}`
+    })
+  }
+  // console.log(ll)
+
+  // setTimeout(() => {
+  //   ll = null
+  // }, 7000);
+</script>
 </html>

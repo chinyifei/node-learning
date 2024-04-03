@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>正方形旋转</title>
+    <style>
+      .container {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin: -300px 0 0 -300px;
+        width: 600px;
+        height: 600px;
+        background: lightgray;
+      }
+
+      .ball {
+        position: relative;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: coral;
+      }
+      .operating {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="operating">
+      <div>点击按钮后,会同时执行1000个耗时任务</div>
+      <button id="start" onclick="runTask(fnc)">开始执行耗时任务</button>
+    </div>
+    <div class="container">
+      <div id="ball" class="ball"></div>
+    </div>
+  </body>
+  <script src="./practice/runTask.js"></script>
+  <script>
+    let $ball = document.querySelector("#ball");
+    let angle = 0;
+    let getPosition = ((centerX, centerY, radius) => {
+      return (angle) => {
+        return {
+          x: +centerX + Math.cos(angle) * radius,
+          y: +centerY + Math.sin(angle) * radius,
+        };
+      };
+    })(275, 275, 275);
+
+    run();
+
+    function run() {
+      // 角度加1
+      angle += 1;
+      let position = getPosition((angle * Math.PI) / 180);
+      $ball.style.transform = `translate(${position.x}px, ${position.y}px)`;
+      window.requestAnimationFrame(run);
+    }
+
+    // 耗时任务
+    function* fnc() {
+      let i = 0;
+      const start = performance.now();
+      while (performance.now() - start <= 5000) {
+        yield i++;
+      }
+
+      return i;
+    }
+
+    // function fnc() {
+    //   return new Promise((resolve) => {
+    //     let i = 0;
+    //     let interval = 100; // 设置每个小任务的执行时间间隔为100毫秒
+    //     let totalExecutionTime = 3000; // 设置总的执行时间为3000毫秒
+    //     let timerId = setInterval(() => {
+    //       if (performance.now() - start <= totalExecutionTime) {
+    //         i++;
+    //       } else {
+    //         clearInterval(timerId);
+    //         resolve(i);
+    //       }
+    //     }, interval);
+    //   });
+    // }
+
+    /**
+     * 运行一个耗时任务
+     * 如果要异步执行任务, 请返回Promise
+     * 要尽快完成任务,同事不要让页面产生卡顿
+     * 尽可能兼容更多的浏览器
+     * @param { Function } task 阻塞主线程的耗时任务
+     */
+    function runTask(task) {
+      console.time();
+      return new Promise((resolve) => {
+        _runTask(task, resolve);
+      }).then(() => {
+        console.timeEnd();
+      });
+    }
+
+    function _runTask(task, callback) {
+      requestAnimationFrame(() => {
+        let start = Date.now();
+        if (Date.now() - start < 16.6) {
+          task();
+          callback();
+        } else {
+          _runTask(task, callback);
+        }
+      });
+    }
+  </script>
+</html>

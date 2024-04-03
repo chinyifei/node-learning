@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>时间切片练习</title>
+  </head>
+  <style>
+    body {
+      height: 100vh;
+      overflow: scroll;
+    }
+  </style>
+  <body>
+    <button id="btn">添加100000个元素</button>
+    <button id="bt">点击</button>
+  </body>
+  <script defer>
+    const btn = document.querySelector("#btn");
+    const bt = document.querySelector("#bt");
+    bt.onclick = () => {
+      console.log("开始执行");
+      setTimeout(() => {
+        console.log("setTimeout");
+      }, 0);
+      Promise.resolve().then(() => {
+        console.log("Promise");
+      });
+      requestIdleCallback(() => {
+        console.log("requestIdleCallback");
+      });
+    };
+    const datas = new Array(10000).fill(0).map((_, i) => i);
+    btn.onclick = () => {
+      // for (const i of datas) {
+      //   const div = document.createElement("div");
+      //   div.innerText = i;
+      //   document.body.appendChild(div);
+      // }
+      const taskHandler = (i) => {
+        const div = document.createElement("div");
+        div.innerText = i;
+        document.body.appendChild(div);
+      };
+      performChunk(datas, taskHandler);
+    };
+    /***
+     * 任务分片执行
+     */
+    function performChunk(datas, taskHandler) {
+      if (datas.length === 0) {
+        return;
+      }
+      let i = 0;
+      //开启下一个分片任务
+      function _run() {
+        console.log("分片任务开始", i);
+        if (i >= datas.length) {
+          console.log("分片任务结束", i);
+          return;
+        }
+        requestIdleCallback((idle) => {
+          while (idle.timeRemaining() > 0 && i < datas.length) {
+            taskHandler(datas[i], i);
+            i++;
+          }
+        });
+        //此次分片任务结束后开启下一个分片任务
+        // Promise.resolve().then(_run);
+        setTimeout(() => {
+          _run();
+          // Promise.resolve().then(_run);
+        }, 0);
+        // _run();
+      }
+      _run();
+    }
+  </script>
+</html>

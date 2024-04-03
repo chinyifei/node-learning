@@ -290,6 +290,12 @@ function executePromise(promiseArr) {
       });
     }
     //这里会等for循环结束之后才执行吗?
+    //这里的for循环相当于
+    /**
+     * let promise = Promise.resolve();
+     * promise.then(callback).then(callback).then(callback).then(callback).then(callback)......
+     */
+    //这会等待for循环里面的p1,p2,p3,p4....p.lepromiseArr.length的  promise的状态变为fulfilled，才会执行
     promise.then(() => {
       resolve(result);
     });

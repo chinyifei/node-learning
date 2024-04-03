@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>时间切片练习</title>
+  </head>
+  <style>
+    body {
+      height: 100vh;
+      overflow: scroll;
+    }
+  </style>
+  <body>
+    <button id="btn">添加100000个元素</button>
+    <button id="bt">点击</button>
+  </body>
+  <script defer>
+    const btn = document.querySelector("#btn");
+
+    const datas = new Array(10000).fill(0).map((_, i) => i);
+    btn.onclick = () => {
+      const taskHandler = (_, i) => {
+        const div = document.createElement("div");
+        div.innerText = i;
+        document.body.appendChild(div);
+      };
+      const schedule = (task) => {
+        setTimeout(() => {
+          const now = performance.now();
+          task(() => performance.now() - now <= 10);
+        }, 10);
+      };
+      performChunk(datas, taskHandler, schedule);
+    };
+    /***
+     * 任务分片执行
+     */
+    function performChunk(datas, taskHandler, schedule) {
+      //参数归一化
+      if (typeof datas === "number") {
+        datas = {
+          length: datas,
+        };
+      }
+      if (datas.length === 0) {
+        return;
+      }
+      let i = 0;
+      //开启下一个分片任务
+      function _run() {
+        // console.log("分片任务开始", i);
+        if (i >= datas.length) {
+          console.log("分片任务结束", i);
+          return;
+        }
+        schedule((goOn) => {
+          while (goOn() && i < datas.length) {
+            taskHandler(datas[i], i);
+            i++;
+          }
+        });
+        //此次分片任务结束后开启下一个分片任务
+        // Promise.resolve().then(_run);
+        setTimeout(() => {
+          _run();
+          // Promise.resolve().then(_run);
+        }, 0);
+        // _run();
+      }
+      _run();
+    }
+
+    /**
+     * 浏览器环境下
+     */
+    function browserPerformChunk(datas, taskHandler) {
+      const schedule = (task) => {
+        requestIdleCallback((idle) => {
+          task(() => idle.timeRemaining());
+        });
+      };
+      performChunk(datas, taskHandler, schedule);
+    }
+  </script>
+</html>

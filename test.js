@@ -32,7 +32,6 @@ function executePromise(promiseArr) {
         result.push(res);
       });
     }
-    //这里会等for循环结束之后才执行吗?
     promise.then(() => {
       resolve(result);
     });
