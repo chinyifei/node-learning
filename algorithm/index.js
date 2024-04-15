@@ -1,27 +1,27 @@
-// /**
-//  * 给定数组arr，arr中所有的值都为正整数且不重复。每个值代表一种面值的货币，每种面值的货币可以使用任意张，
-//  * 再给定一个aim，代表要找的钱数，求组成aim的最少货币数。 如果无解，请返回-1.
-//  */
-// function minCoins(coins, amount) {
-//   // base case
-//   if (amount == 0) return 0;
-//   if (amount < 0) return -1;
+/**
+ * 给定数组arr，arr中所有的值都为正整数且不重复。每个值代表一种面值的货币，每种面值的货币可以使用任意张，
+ * 再给定一个aim，代表要找的钱数，求组成aim的最少货币数。 如果无解，请返回-1.
+ */
+function minCoins(coins, amount) {
+  // base case
+  if (amount == 0) return 0;
+  if (amount < 0) return -1;
 
-//   var res = Number.MAX_SAFE_INTEGER;
-//   for (var coin of coins) {
-//     var subProblem = minCoins(coins, amount - coin);
-//     // 子问题无解则跳过
-//     if (subProblem == -1) continue;
-//     // 在子问题中选择最优解，然后加一
-//     res = Math.min(res, subProblem + 1);
-//   }
-//   return res == Number.MAX_SAFE_INTEGER ? -1 : res;
-// }
+  var res = Number.MAX_SAFE_INTEGER;
+  for (var coin of coins) {
+    var subProblem = minCoins(coins, amount - coin);
+    // 子问题无解则跳过
+    if (subProblem == -1) continue;
+    // 在子问题中选择最优解，然后加一
+    res = Math.min(res, subProblem + 1);
+  }
+  return res == Number.MAX_SAFE_INTEGER ? -1 : res;
+}
 
-// // 示例用法
-// const arr = [1, 2, 5];
-// const aim = 21;
-// console.log(minCoins(arr, aim)); // 输出 3（需要 3 张面值为 5 的货币）
+// 示例用法
+const arr = [1, 2, 5];
+const aim = 21;
+console.log(minCoins(arr, aim)); // 输出 5（需要 4 张面值为 5 的货币 ,一张面值为 1 的货币）
 
 // /**
 //  * 给定一个整数数组nums，按升序排序，数组中的元素各不相同。 nums数组在传递给search函数之前，
